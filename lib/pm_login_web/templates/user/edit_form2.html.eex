@@ -1,0 +1,56 @@
+<div class="container profile-data" style="padding-top: 10px; border-radius: 5px;">
+<!-- [as: :user_params, multipart: true] -->
+<%= form_for @changeset, @action, [multipart: true],fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Vérifiez vos informations ci-dessous</p>
+    </div>
+  <% end %>
+<div >
+  <div>
+    <div style="display: flex;justify-content: space-around;margin-bottom:20px;">
+    <img class="profile-pic-edit" alt="image 1" src=<%= Routes.static_path(@socket, "/profile_pic/#{@user.profile_picture}") %> />
+    </div>
+    <span style="font-weight: bold; margin-bottom:20px;">Changer photo de profil : <span class="btn btn-lg btn-primary file_input_btn">
+    <%= file_input f, :photo, class: "file_inputs" %>
+    séléctionner photo
+    <i class="bi bi-camera-fill"></i>
+    </span></span>
+    
+    <div style="font-weight: bold;">Nom :</div>
+    <%= text_input f, :username %>
+    <%= error_tag f, :username %>
+    <p style="font-size: smaller;color: gray;">Modifier votre nom modifie aussi votre identifiant !</p>
+    <div style="font-weight: bold;">Mail :</div>
+    <%= text_input f, :email %>
+    <%= error_tag f, :email %>
+    <div style="font-weight: bold;">Téléphone :</div>
+    <%= text_input f, :phone_number %>
+    <%= error_tag f, :phone_number %>
+    <div>
+    <%= link "Modifier mot de passe",to: Routes.user_path(@socket, :edit_password, @user), class: "btn btn-outline-dark btn-lg ", id: "signin", style: "margin-bottom:20px;" %>
+    </div>
+  </div>
+  
+  <div style="display: flex; justify-content: space-between;">
+    <span><%= submit "Appliquer modifications", class: "card-button-green", id: "signin" %></span>
+    <span><a href="<%= Routes.user_path(@socket, :edit_profile, @user) %>" class="card-button-orange" > Annuler</a></span>
+  </div>
+</div>
+
+
+<div id="right-row" class="row">
+
+  
+
+
+  </div>
+</div>
+
+  
+
+
+<% end %>
+
+
+</div>
