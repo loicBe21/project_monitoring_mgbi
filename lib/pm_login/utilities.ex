@@ -22,6 +22,10 @@ defmodule PmLogin.Utilities do
     Calendar.strftime(naive_dt, "%d/%m/%Y")
   end
 
+  def simple_date_format1(naive_dt) do
+    Calendar.strftime(naive_dt, "%Y-%m-%d")
+  end
+
   def simple_date_format_with_hours(naive_dt) do
     Calendar.strftime(naive_dt, "%d/%m/%Y, à %Hh %M")
   end
@@ -212,6 +216,37 @@ defmodule PmLogin.Utilities do
     csv_content_generator(task_list)
   end
 
+
+  #fonction qui cree une liste de map pour chaque ligne (rows) avec le cles donnes en parametre
+  #dans columns
+  #utile pour recuperer les resultat d'une requete sql
+  def build_result(columns, rows) do
+    new_columns = Enum.map(columns, &String.to_atom/1)
+
+    rows
+    |> Enum.map(fn row ->
+      Enum.zip(new_columns, row)
+      |> Enum.into(%{})
+    end)
+  end
+
+  def parse_date_string(date_str) do
+    case Date.from_iso8601(date_str) do
+      {:ok, date} -> date
+      {:error, _reason} -> nil
+    end
+  end
+
+
+  def parse_date_to_html(date)  do
+    Date.to_string(date)
+  end
+
+ def parse_minutes_to_time(minutes) do
+    hours = div(minutes, 60)
+    remaining_minutes = rem(minutes, 60)
+    "#{String.pad_leading("#{hours}", 2, "0")}h #{String.pad_leading("#{remaining_minutes}", 2, "0")} min"
+  end
 
 
 

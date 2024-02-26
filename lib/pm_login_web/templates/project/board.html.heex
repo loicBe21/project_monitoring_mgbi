@@ -221,7 +221,7 @@
         else "stage__cards" end}>
 
         <%= for card <- stage.cards do %>
-        <%= if (card.task.is_valid == true and card.task.status_id != 6 and (@is_admin or @is_attributor or @curr_user_id==card.task.contributor_id) )  do %>
+        <%= if (card.task.status_id != 6 and (@is_admin or @is_attributor or @curr_user_id==card.task.contributor_id) )  do %>
 
         <div>
           <div data-card-id={ card.id } class={" #{if card.task.status_id ==5 and card.task.clients_request != nil and

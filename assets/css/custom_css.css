@@ -1,0 +1,54 @@
+.custom_container {
+    width: 80%;
+    /* Largeur du conteneur */
+    margin: 0 auto;
+    /* Centrer le conteneur horizontalement */
+}
+
+.custom_row {
+    display: flex;
+    /* Utiliser flexbox pour les lignes */
+}
+
+.custom_col {
+    flex: 1;
+    /* Distribuer l'espace disponible également entre les colonnes */
+    border: 1px solid #ccc;
+    /* Ajouter une bordure pour la délimitation */
+    padding: 10px;
+    /* Ajouter un espace intérieur */
+    box-sizing: border-box;
+    /* Inclure la bordure dans la largeur/hauteur */
+}
+
+
+.table-container {
+    max-height: 800px;
+    /* Ajustez la hauteur maximale selon vos besoins */
+    overflow-y: auto;
+    /* Ajoute une barre de défilement verticale lorsque le contenu dépasse */
+    margin-top: 10px;
+}
+
+.custom-table {
+    width: 100%;
+    /* Assurez-vous que le tableau occupe tout l'espace disponible */
+    border-collapse: collapse;
+    /* Pour fusionner les bordures des cellules */
+}
+
+.custom-table thead th {
+    background-color: #f2f2f2;
+    /* Couleur de fond de l'entête du tableau */
+    position: sticky;
+    /* Fixe l'entête du tableau en haut de la vue lorsque vous faites défiler */
+    top: 0;
+    /* Place l'entête du tableau en haut */
+    z-index: 2;
+    /* Assure que l'entête reste au-dessus du contenu du tableau */
+}
+
+.custom-table tbody tr:hover {
+    background-color: #f5f5f5;
+    /* Couleur de fond au survol des lignes */
+}

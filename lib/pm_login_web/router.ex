@@ -19,6 +19,11 @@ defmodule PmLoginWeb.Router do
   scope "/", PmLoginWeb do
     pipe_through :browser
 
+    #saisie de temps
+    get "/saisie_temps" , SaisieTempsController, :index
+    get "/saisie_temps_views" , SaisieTempsController, :index_admin
+    get "/saisie_details/:id/:date" , SaisieTempsController , :details
+
     #contributor route
     get "/logs", ProjectController, :logs
     get "/my_projects", ContributorController, :my_projects
@@ -95,7 +100,7 @@ defmodule PmLoginWeb.Router do
     resources "/clients_request", ClientsRequestController, except: [:new, :show]
     resources "/task", TaskController, except: [:new]
 
-
+    #export csv
     get "/export" , CsvController , :download
 
   end

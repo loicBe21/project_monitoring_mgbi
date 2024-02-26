@@ -2,9 +2,9 @@
 
     <div class="column basecontents__without__radius my__company__title">
      <h3 class="h__company__title"><%= @task.title %></h3>
-    
+
     </div>
- 
+
     <div class="col">
      <p style="margin-top:50px;">Nombre approximatif d'heures par jour ouvrable pour l'intervenant pour terminer cette tâche avant la date d'échéance:
         <%= PmLogin.Monitoring.avg_working_hours(@task) %> heures
@@ -18,13 +18,13 @@
     </a>
     <a  class="btn btn-primary" onclick="history.back()">Retour</a>
     </div>
-    
+
 
   </div>
 </div>
 
 
-  <div class="detail-task-2" style="background-color: white;width:1000px;margin-left:-300px;margin-top:30px">
+  <div class="detail-task-2" style="background-color: white;width:1000px;margin-top:30px">
   <div class="row">
     <div class="col">
        <div class="row">
@@ -188,7 +188,7 @@
 
     <div class="stage_history_show" style="background-color: #fff;">
         <div style="height: 100%; padding-left: 15px;padding-right: 10px;">
-          <div 
+          <div
             style={"
               display: inline-block;
               color: #fff;
@@ -211,7 +211,7 @@
             </div>
             <div class="card__name" style="font-size: 11px;margin-left:13px">
               <a href={ Routes.task_path(@socket, :show, task_history.task.id) } ><%= task_history.task.title %></a>
-            </div>          
+            </div>
             <p style="font-size: 11px;margin-left:13px">
               <%= task_history.status_from.title %> &#x2192; <%= task_history.status_to.title %>
             </p>
@@ -223,8 +223,8 @@
             <hr style="border-top: 0.1rem solid #b9bcbf!important;">
           <% end %>
           <% end %>
-         
-         
+
+
             <div style="display: flow-root list-item; margin-bottom: 3px; font-size: 10px;margin-left:13px">
               <p style="word-wrap: anywhere; color: #727272; display: inline;">
                 <%= Utilities.simple_date_format_with_hours_onboard(@task.inserted_at) %>
@@ -232,11 +232,11 @@
             </div>
             <div class="card__name" style="font-size: 11px;margin-left:13px">
               <a href={ Routes.task_path(@socket, :show, @task.id) } ><%= @task.title %></a>
-            </div>          
+            </div>
             <p style="font-size: 11px;margin-left:13px">
               Créé
             </p>
-            <hr style="border-top: 0.1rem solid #b9bcbf!important;"> 
+            <hr style="border-top: 0.1rem solid #b9bcbf!important;">
     </div>
   </div>
   </div>
@@ -409,7 +409,7 @@
     <div class="row board_history_show" style="width: 17%">
       <div class="stage_history_show" style="background-color: #fff;">
         <div style="height: 100%; padding-left: 15px;padding-right: 10px;">
-          <div 
+          <div
             style={"
               display: inline-block;
               color: #fff;
@@ -432,7 +432,7 @@
             </div>
             <div class="card__name" style="font-size: 11px;margin-left:13px">
               <a href={ Routes.task_path(@socket, :show, task_history.task.id) } ><%= task_history.task.title %></a>
-            </div>          
+            </div>
             <p style="font-size: 11px;margin-left:13px">
               <%= task_history.status_from.title %> &#x2192; <%= task_history.status_to.title %>
             </p>
@@ -444,8 +444,8 @@
             <hr style="border-top: 0.1rem solid #b9bcbf!important;">
           <% end %>
           <% end %>
-         
-         
+
+
             <div style="display: flow-root list-item; margin-bottom: 3px; font-size: 10px;margin-left:13px">
               <p style="word-wrap: anywhere; color: #727272; display: inline;">
                 <%= Utilities.simple_date_format_with_hours_onboard(@task.inserted_at) %>
@@ -453,16 +453,16 @@
             </div>
             <div class="card__name" style="font-size: 11px;margin-left:13px">
               <a href={ Routes.task_path(@socket, :show, @task.id) } ><%= @task.title %></a>
-            </div>          
+            </div>
             <p style="font-size: 11px;margin-left:13px">
               Créé
             </p>
-            <hr style="border-top: 0.1rem solid #b9bcbf!important;"> 
+            <hr style="border-top: 0.1rem solid #b9bcbf!important;">
         </div>
       </div>
     </div>
 </div>
-  
+
   <%= live_component(@socket, PmLoginWeb.LiveComponent.CommentsModalLive, id: "confirm-arch" , title: "Commentaires" , body: nil,
             right_button: "Oui" , right_button_action: "arch" , right_button_param: "" , #@arch_id
             left_button: "Annuler" , left_button_action: "cancel-comments" , curr_user_id: @curr_user_id, changeset:
@@ -475,5 +475,3 @@
           @curr_user_id, modif_changeset: @modif_changeset, priorities: @priorities, contributors: @contributors, attributors: @attributors,
           is_admin: @is_admin, is_contributor: @is_contributor, is_attributor: @is_attributor, show_modif_modal:
           @show_modif_modal, card: @card) %>
-
- 

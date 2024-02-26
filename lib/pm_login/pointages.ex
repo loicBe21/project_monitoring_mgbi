@@ -4,11 +4,16 @@ defmodule PmLogin.Pointages do
   """
   #import Ecto.Changeset
   import Ecto.Query, warn: false
+  alias PmLogin.Utilities
   alias PmLogin.Repo
 
   alias PmLogin.Pointages.LaunchType
   alias PmLogin.Pointages.TaskTracing
   alias PmLogin.Monitoring
+  alias PmLogin.Pointages.TimeTracking
+  alias PmLogin.Pointages.SaisiesValidees
+  alias PmLogin.Login
+  import Ecto.Changeset
 
 
 
@@ -85,6 +90,12 @@ defmodule PmLogin.Pointages do
         IO.inspect reason
     end
   end
+
+
+
+
+
+
 
 
   def get_details_task_in_record(id_user) do
@@ -208,6 +219,40 @@ defmodule PmLogin.Pointages do
   end
 
 
+  defp time_tracking_changeset(attrs) do
+    TimeTracking.changeset(%TimeTracking{} , attrs)
+  end
+
+  def save_time_tracking(attrs) do
+    case time_tracking_changeset(attrs) do
+      %Ecto.Changeset{valid?: true ,changes: changes} ->
+        IO.inspect changes
+        Repo.insert(time_tracking_changeset(attrs))
+        {:ok, :saved}
+      %Ecto.Changeset{valid?: false, errors: errors} ->
+        IO.inspect errors
+      {:error, errors}
+    end
+  end
+
+ def save_time_tracking1(attrs) do
+  case time_tracking_changeset(attrs) do
+    %Ecto.Changeset{valid?: true, changes: changes} ->
+      case get_saisie_validee(attrs["user_id"], attrs["date"]) do
+        nil ->
+           Repo.insert(time_tracking_changeset(attrs))
+          {:ok, :saved}
+        _ ->
+          {:error, "Saisie déjà validée pour cette date et cet utilisateur"}
+      end
+    %Ecto.Changeset{valid?: false, errors: errors} ->
+      {:error, "veillez verifier les information saisie"}
+  end
+end
+
+
+
+
 
 
 
@@ -221,6 +266,113 @@ defmodule PmLogin.Pointages do
      TaskTracing.play_changeset(%TaskTracing{} , attrs)
      TaskTracing.update_changeset(%TaskTracing{} , attrs_1)
   end
+
+
+  #PmLogin.Pointages.test_changeset2()
+  def test_changeset2() do
+    attrs =  %{h_work: -360, h_abs: 0}
+    TimeTracking.changeset(%TimeTracking{} , attrs)
+  end
+
+  def get_users_times_by_date(date) do
+    #sql_query = "select users.id ,users.username, auth.right_id  ,coalesce(8 * 60 - sum(h_work), 8 * 60) as h_dynamique_abs, coalesce(sum(h_work),0) as h_work ,coalesce(sum(h_abs),0) as h_abs from users left join  time_tracking ON users.id = time_tracking.user_id AND time_tracking.date = $1 join auth ON auth.id = users.id   group by time_tracking.user_id , users.username , users.id , auth.right_id"
+    sql_query = "SELECT
+    users.id,
+    users.username,
+    auth.right_id,
+    COALESCE(8 * 60 - SUM(time_tracking.h_work), 8 * 60) AS h_dynamique_abs,
+    COALESCE(SUM(time_tracking.h_work), 0) AS h_work,
+    COALESCE(SUM(time_tracking.h_abs), 0) AS h_abs,
+    saisies_validees.inserted_at AS date_validation
+    FROM
+    users
+    LEFT JOIN
+    time_tracking ON users.id = time_tracking.user_id AND time_tracking.date = $1
+    LEFT JOIN
+    saisies_validees ON users.id = saisies_validees.user_id AND saisies_validees.date = $1
+    JOIN
+    auth ON auth.id = users.id
+    GROUP BY
+    users.id, users.username, auth.right_id, saisies_validees.inserted_at"
+    params = [date]
+    case Ecto.Adapters.SQL.query(Repo, sql_query, params) do
+     {:ok, %Postgrex.Result{columns: columns, rows: rows}} ->
+      # Construire une liste de maps où chaque map représente une ligne de résultats
+      Utilities.build_result(columns, rows)
+      {:error, reason} ->
+        IO.inspect reason
+    end
+
+  end
+
+  def get_details_saisie_by_date_and_user(date , user_id) do
+    sql_query = "select time_tracking.task_id,tasks.title as task_title ,projects.title as project_title,sum(time_tracking.h_work) as h_works ,
+    time_tracking.user_id , users.username  from time_tracking join tasks on time_tracking.task_id = tasks.id and time_tracking.date=$1 and time_tracking.user_id = $2
+    join projects on projects.id = tasks.project_id
+    join users on users.id = time_tracking.user_id
+    group by time_tracking.task_id ,time_tracking.user_id , tasks.title  ,projects.title,users.username"
+    params = [date , user_id]
+    case Ecto.Adapters.SQL.query(Repo, sql_query, params) do
+     {:ok, %Postgrex.Result{columns: columns, rows: rows}} ->
+      # Construire une liste de maps où chaque map représente une ligne de résultats
+      Utilities.build_result(columns, rows)
+      {:error, reason} ->
+        IO.inspect reason
+    end
+
+  end
+
+
+defp can_validate_saisie?(changeset) do
+  case changeset.changes.user_validator_id do
+    nil ->
+      # L'utilisateur n'a pas été spécifié
+      false
+    user_validator_id ->
+      case Login.get_user!(user_validator_id).right_id do
+        1 ->
+          true
+        _ ->
+          false
+      end
+  end
+end
+
+def validate_saisie(saisie_attrs) do
+  changeset = SaisiesValidees.changeset(%SaisiesValidees{}, saisie_attrs)
+  case changeset.valid? do
+    true ->
+      case can_validate_saisie?(changeset) do
+        true ->
+          {:ok, changeset}
+
+        false ->
+          {:error, "Droit refusé"}
+      end
+
+    false ->
+      {:error, "Erreur lors de la validation"}
+  end
+end
+
+def save_saisie_validee(saisie_attrs) do
+  case validate_saisie(saisie_attrs) do
+    {:ok , changeset}
+      ->
+        Repo.insert(changeset)
+        {:ok, "Saisie validée avec succès"}
+    {:error , message}
+      ->
+        {:error , message}
+  end
+end
+
+ def get_saisie_validee(user_id, date) do
+    Repo.one(from s in SaisiesValidees, where: s.user_id == ^user_id and s.date == ^date)
+ end
+
+
+
 
 
 end

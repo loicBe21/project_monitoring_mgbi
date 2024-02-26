@@ -3437,4 +3437,16 @@ defmodule PmLogin.Monitoring do
     end
   end
 
+  def get_my_task_active(user_id) do
+    contributor_query = from(contributor in User)
+    status_query = from(status in Status)
+    project_query = from(project in Project)
+
+    query =  from t in Task ,
+      preload: [contributor: ^contributor_query, status: ^status_query , project: ^project_query ],
+      where: t.status_id != 5 and t.status_id != 6 and t.contributor_id == ^user_id
+
+    Repo.all(query)
+  end
+
 end

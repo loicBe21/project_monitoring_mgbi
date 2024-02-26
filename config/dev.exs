@@ -3,10 +3,10 @@ import Config
 # Configure your database
 config :pm_login, PmLogin.Repo,
   username: "postgres", #odoo
-  password: "MGbi@262**", #MGbi@262!-
+  password: "", #MGbi@262!-
   hostname: "localhost",
-  database: "pm_users_2024",
-  port: 5433,
+  database: "pm_users_2k24",
+  port: 5432,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
