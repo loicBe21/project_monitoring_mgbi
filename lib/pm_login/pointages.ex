@@ -367,6 +367,9 @@ def save_saisie_validee(saisie_attrs) do
   end
 end
 
+
+#novaiko ihery test
+
  def get_saisie_validee(user_id, date) do
     Repo.one(from s in SaisiesValidees, where: s.user_id == ^user_id and s.date == ^date)
  end
